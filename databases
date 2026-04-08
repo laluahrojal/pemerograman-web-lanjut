@@ -1,0 +1,30 @@
+  BUAT DATABASE
+
+- CREATE DATABASE praktikum_web;
+- USE praktikum_web;
+- CREATE TABLE mahasiswa (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100),
+    prodi VARCHAR(100),
+    kelas VARCHAR(50),
+    sosmed VARCHAR(255)
+);
+
+-SHOW TABLES;
+-DESCRIBE mahasiswa;
+
+- INSERT INTO mahasiswa (nama, prodi, kelas, sosmed) 
+VALUES ('Ahmad', 'Teknik Informatika', 'A', 'https://instagram.com/ahmad');
+
+- SELECT * FROM mahasiswa;
+
+
+struktur nya 
+praktikum_web/
+
+- index.php
+-koneksi.php
+- tambah.php
+- tampil.php
+- hapus.php
+─ edit.php
