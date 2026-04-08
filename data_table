@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <title>belajar tabel html</title>
+        <link rel="stylesheet" href="srh/jquery.dataTables.min.css"></link>
+        <script src="srh/jquery-3.7.0.min.js"></script> 
+        <script src="srh/jquery.dataTables.min.js"></script>
+    </head>
+    <body>
+
+<h2>data mahasiswa lulus PTKIN</h2>
+
+Nama: <input type="text" id="nama">
+Prodi: <input type="text" id="prodi">
+Kelas: <input type="text" id="kelas">
+Sosmed: <input type="text" id="sosmed">
+<button onclick="tambahData()">tambbahh</button>
+<br>
+
+
+
+<br>
+<br> lihat data mahasiswa yang sudah lulus PTKIN di tabel dibawah ini yaa
+
+     <table border="1" cellpadding="5" id="table1">
+<thead>
+<tr>
+    <th>No</th>
+    <th>Nama</th> 
+    <th>Prodi</th>
+    <th>Kelas</th>
+    <th>Sosmed</th>
+    <th>Aksi</th>
+</tr>
+
+</thead>
+<tbody>
+<script>
+let table;
+$(document).ready(function () {
+    table = $('#table1').DataTable();
+    loadData();
+});
+
+function ambilData()
+{  
+    let data = localStorage.getItem('mahasiswa');
+    return data ? JSON.parse(data) : [];
+}
+
+function simpanData(data) { 
+    localStorage.setItem('mahasiswa', JSON.stringify(data));
+}
+function loadData() 
+{
+    let data = ambilData();
+    table.clear();
+    data.forEach((item, index) => {
+        table.row.add([
+            index + 1,
+            item.nama,
+            item.prodi,
+            item.kelas,
+            `<a href="${item.sosmed}" target="_blank">IG</a>`,
+            `<button onclick="editData(${index})">Edit</button>
+             <button onclick="hapusData(${index})">Hapus</button>`
+        ]).draw(false);
+    });
+}
+
+function tambahData() 
+{
+    let nama = $('#nama').val();
+    let prodi = $('#prodi').val();
+    let kelas = $('#kelas').val();
+    let sosmed = $('#sosmed').val();
+    let data = ambilData();
+    data.unshift({ nama, prodi, kelas, sosmed });
+    simpanData(data);
+    loadData();
+    $('#nama').val('');
+    $('#prodi').val('');
+    $('#kelas').val('');
+    $('#sosmed').val('');
+}
+function hapusData(index) 
+
+{
+    let data = ambilData();
+    data.splice(index, 1);
+    simpanData(data);
+    loadData();
+}
+
+function editData(index) 
+{ 
+    let data = ambilData();
+    let namaBaru = prompt("Nama:", data[index].nama);
+    let prodiBaru = prompt("Prodi:", data[index].prodi);
+    let kelasBaru = prompt("Kelas:", data[index].kelas);
+    let sosmedBaru = prompt("ganti Link Sosmed:", data[index].sosmed);
+    data[index] = 
+    {
+        nama: namaBaru,
+        prodi: prodiBaru,
+        kelas: kelasBaru,
+        sosmed: sosmedBaru
+    };
+
+    simpanData(data);
+    loadData();
+}
+</script>
+
+</body>
+</html>
