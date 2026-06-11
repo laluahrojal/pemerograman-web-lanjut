@@ -1,97 +1,60 @@
 <?php
 require 'koneksi.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['add'])) {
-        $judul = $_POST['judul_materi'];
-        $file = $_POST['file_materi']; // link text untuk saat ini
-        $kelas_id = $_POST['kode_kelas'];
-        
-        $conn->query("INSERT INTO materi (judul_materi, file_materi, kode_kelas) VALUES ('$judul', '$file', '$kelas_id')");
-    } elseif (isset($_POST['delete'])) {
-        $id = $_POST['kode_materi'];
-        $conn->query("DELETE FROM materi WHERE kode_materi = '$id'");
-    }
-}
+$user_id = $_SESSION['user_id'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kelola Materi</title>
+    <title>Materi Pembelajaran</title>
     </head>
 <body>
     <div class="container">
         <header>
-            <h1>Admin - Kelola Materi</h1>
+            <h1>Materi Pembelajaran</h1>
             <a href="../logout.php" class="btn">Logout</a>
         </header>
 
         <table style="width:100%; text-align:center; margin-bottom:20px;">
             <tr>
                 <td><a href="index.php">Dashboard</a></td>
-            <td><a href="kelas.php">Kelola Kelas</a></td>
-            <td><a href="tutor.php">Kelola Tutor</a></td>
-            <td><a href="materi.php" class="active">Kelola Materi</a></td>
-            <td><a href="jadwal.php">Kelola Jadwal</a></td>
-            <td><a href="zoom.php">Kelola Zoom Meeting</a></td>
-            <td><a href="member.php">Data Member</a></td>
-            <td><a href="laporan.php">Laporan</a></td>
+            <td><a href="profil.php">Profil</a></td>
+            <td><a href="daftar_kelas.php">Daftar Kelas</a></td>
+            <td><a href="materi.php" class="active">Materi</a></td>
+            <td><a href="tutor.php">Tutor</a></td>
+            <td><a href="jadwal.php">Jadwal</a></td>
+            <td><a href="zoom.php">Zoom Meeting</a></td>
             </tr>
         </table>
 
         <main>
-            <div class="card">
-                <h3>Tambah Materi</h3>
-                <form method="POST" action="">
-                    <div class="form-group">
-                        <label>Judul Materi</label>
-                        <input type="text" name="judul_materi" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Link / File Materi</label>
-                        <input type="text" name="file_materi" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Kelas</label>
-                        <select name="kode_kelas" required>
-                            <?php
-                            $kelas = $conn->query("SELECT * FROM kelas");
-                            while($k = $kelas->fetch_assoc()):
-                            ?>
-                            <option value="<?php echo $k['kode_kelas']; ?>"><?php echo $k['nama_kelas']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <button type="submit" name="add" class="btn">Simpan</button>
-                </form>
-            </div>
-
-            <h3>Daftar Materi</h3>
+            <h3>Materi dari Kelas Saya</h3>
             <table>
                 <tr>
-                    <th>ID</th>
-                    <th>Judul Materi</th>
-                    <th>File</th>
                     <th>Kelas</th>
+                    <th>Judul Materi</th>
                     <th>Aksi</th>
                 </tr>
                 <?php
-                $result = $conn->query("SELECT m.*, k.nama_kelas FROM materi m LEFT JOIN kelas k ON m.kode_kelas = k.kode_kelas");
-                while($row = $result->fetch_assoc()):
+                $sql = "SELECT m.*, k.nama_kelas FROM materi m 
+                        JOIN kelas k ON m.kode_kelas = k.kode_kelas 
+                        JOIN peserta_kelas p ON k.kode_kelas = p.kode_kelas 
+                        WHERE p.kode_user = $user_id";
+                $result = $conn->query($sql);
+                
+                if($result->num_rows > 0):
+                    while($row = $result->fetch_assoc()):
                 ?>
                 <tr>
-                    <td><?php echo $row['kode_materi']; ?></td>
-                    <td><?php echo $row['judul_materi']; ?></td>
-                    <td><?php echo $row['file_materi']; ?></td>
                     <td><?php echo $row['nama_kelas']; ?></td>
-                    <td>
-                        <form method="POST" action="" style="margin:0; padding:0; border:none;">
-                            <input type="hidden" name="kode_materi" value="<?php echo $row['kode_materi']; ?>">
-                            <button type="submit" name="delete" class="btn">Hapus</button>
-                        </form>
-                    </td>
+                    <td><?php echo $row['judul_materi']; ?></td>
+                    <td><a href="<?php echo $row['file_materi']; ?>" target="_blank" class="btn">Buka Materi</a></td>
                 </tr>
-                <?php endwhile; ?>
+                <?php 
+                    endwhile; 
+                else: 
+                ?>
+                <tr><td colspan="3">Belum ada materi. Anda mungkin belum bergabung dengan kelas apapun.</td></tr>
+                <?php endif; ?>
             </table>
         </main>
     </div>
