@@ -1,45 +1,41 @@
 <?php
 require 'koneksi.php';
-$user_id = $_SESSION['user_id'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Dashboard</title>
-</head>
+    <title>Kursus Bahasa Inggris</title>
+    </head>
 <body>
     <div class="container">
         <header>
-            <h1>User Dashboard</h1>
+            <h1>Kursus Bahasa Inggris</h1>
             <div>
-                Selamat datang, <?php echo $_SESSION['nama_user'] ?? 'Member'; ?>! | 
-                <a href="../logout.php" class="btn">Logout</a>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="user/index.php" class="btn">Dashboard User</a>
+                <?php elseif(isset($_SESSION['admin_id'])): ?>
+                    <a href="admin/index.php" class="btn">Dashboard Admin</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn">Login</a>
+                    <a href="register.php" class="btn">Daftar Member</a>
+                <?php endif; ?>
             </div>
         </header>
 
-        <table style="width:100%; text-align:center; margin-bottom:20px;">
-            <tr>
-                <td><a href="index.php" class="active">Dashboard</a></td>
-                <td><a href="profil.php">Profil</a></td>
-                <td><a href="daftar_kelas.php">Daftar Kelas</a></td>
-                <td><a href="materi.php">Materi</a></td>
-                <td><a href="tutor.php">Tutor</a></td>
-                <td><a href="jadwal.php">Jadwal</a></td>
-                <td><a href="zoom.php">Zoom Meeting</a></td>
-            </tr>
-        </table>
-
         <main>
-            <h2>Selamat datang di Dashboard Member</h2>
-            <div class="grid">
+            <h2>Selamat Datang!</h2>
+            <p>Tingkatkan kemampuan bahasa Inggris Anda bersama kami.</p>
+            <div class="grid" style="margin-top: 20px;">
                 <div class="card">
-                    <h3>Total Kelas Anda</h3>
-                    <p>
-                        <?php 
-                        $res = $conn->query("SELECT COUNT(*) as total FROM peserta_kelas WHERE kode_user='$user_id'");
-                        echo $res ? $res->fetch_assoc()['total'] : 0;
-                        ?>
-                    </p>
+                    <h3>Materi Lengkap</h3>
+                   
+                </div>
+                <div class="card">
+                    <h3>Tutor Berpengalaman</h3>
+                 
+                </div>
+                <div class="card">
+                    <h3>Jadwal Fleksibel</h3>
                 </div>
             </div>
         </main>
